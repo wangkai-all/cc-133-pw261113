@@ -1,0 +1,4 @@
+meter_id,zone,role,effective_from,effective_to
+IN-01,DMA-01,inlet,2026-11-01,
+BD-07,DMA-01,inlet,2026-11-01,
+UM-01,DMA-01,user,2026-11-01,

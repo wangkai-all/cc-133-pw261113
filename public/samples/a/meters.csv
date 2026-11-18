@@ -1,0 +1,7 @@
+meter_id,name,modulus,bidirectional,max_rate_m3h
+IN-01,入口表1,100000,false,500
+IN-02,入口表2,100000,false,300
+OUT-01,出口表1,100000,false,200
+UM-01,用户总表1,10000,false,20
+UM-02,用户总表2,10000,false,20
+UM-03,用户总表3,10000,false,20

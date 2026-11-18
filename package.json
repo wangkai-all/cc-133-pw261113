@@ -1,0 +1,11 @@
+{
+  "name": "dma-water-balance",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "供水分区(DMA)水平衡分析：累计读数换算、按日平衡、覆盖率与修正对比",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/*.test.js"
+  }
+}

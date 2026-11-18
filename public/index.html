@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>供水分区水平衡分析</title>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header>
+  <h1>供水分区水平衡分析</h1>
+  <p class="notice">
+    差额 = 输入 − 输出，<strong>仅表示水量未平衡</strong>（可能来自计量误差、缺测、回绕推定、分摊估算或管网漏损），不能直接认定为漏水。
+    缺测按未知处理，不计 0；有效覆盖率低于阈值时不输出确定的漏损比例。
+  </p>
+</header>
+
+<section class="card" id="import-section">
+  <h2>数据导入</h2>
+  <div class="row wrap gap">
+    <span class="group-label">样本：</span>
+    <button data-sample="a">样本A · 换表/回绕/人工更正</button>
+    <button data-sample="b">样本B · 反向计量</button>
+    <button data-sample="c">样本C · 边界调整</button>
+    <span class="muted" id="sample-hint"></span>
+  </div>
+  <div class="row wrap gap">
+    <label>入口表读数 CSV <input type="file" id="file-inlet" accept=".csv"></label>
+    <label>出口表读数 CSV <input type="file" id="file-outlet" accept=".csv"></label>
+    <label>用户总表读数 CSV <input type="file" id="file-user" accept=".csv"></label>
+  </div>
+  <div class="row wrap gap">
+    <label>表计属性 CSV <input type="file" id="file-meters" accept=".csv"></label>
+    <label>边界绑定 CSV <input type="file" id="file-bindings" accept=".csv"></label>
+    <label>事件(换表/更正) CSV <input type="file" id="file-events" accept=".csv"></label>
+  </div>
+  <div class="row wrap gap">
+    <label>分区 <input type="text" id="zone-input" value="DMA-01" size="8"></label>
+    <label>覆盖率阈值 <input type="number" id="threshold-input" value="0.8" min="0" max="1" step="0.05" size="4"></label>
+    <span class="muted">读数格式：meter_id,timestamp,value（timestamp 为 YYYY-MM-DD HH:MM，本地时区）</span>
+  </div>
+  <p id="import-status" class="status"></p>
+</section>
+
+<section class="card" id="summary-section" hidden>
+  <h2>按日平衡 <span class="muted small">（点击行核对当日每段读数与缺测范围）</span></h2>
+  <div id="chart"></div>
+  <div class="table-scroll"><table id="daily-table"></table></div>
+  <div class="row gap">
+    <button id="export-daily">导出日汇总 CSV</button>
+    <button id="export-intervals">导出区间明细 CSV</button>
+    <button id="export-json">导出完整 JSON（含换算过程与未解释区间）</button>
+  </div>
+</section>
+
+<section class="card" id="drill-section" hidden>
+  <h2 id="drill-title">单日核对</h2>
+  <div id="drill-body"></div>
+</section>
+
+<section class="card" id="config-section" hidden>
+  <h2>表计与边界配置（修正关联）</h2>
+  <p class="muted small">
+    边界表按绑定的角色与生效日期参与计算；分区关系变更后，各日按当时生效的配置计算。
+    修改下表即构成"修正"，可勾选"对比修正前后"查看差额变化。快照取自最近一次导入/加载样本时。
+  </p>
+  <h3>表计属性</h3>
+  <div class="table-scroll"><table id="meters-table"></table></div>
+  <h3>边界绑定（方向与生效日期）</h3>
+  <div class="table-scroll"><table id="bindings-table"></table></div>
+  <button id="add-binding">+ 添加绑定</button>
+  <h3>事件（换表 / 人工更正）</h3>
+  <div class="table-scroll"><table id="events-table"></table></div>
+  <button id="add-event">+ 添加事件</button>
+  <div class="row gap" style="margin-top:0.8em">
+    <label><input type="checkbox" id="compare-toggle"> 对比修正前后差额</label>
+    <button id="reset-snapshot">重置为导入时配置</button>
+  </div>
+  <div id="compare-body"></div>
+</section>
+
+<footer class="muted small">
+  换算方式说明：普通差值 / 回绕推定（按模数换算，带假设标记）/ 换表分段（按换表事件切分）/ 人工更正（含给定用量，属估算）/
+  反向计量（双向表，用量为负）/ 未解释（负差无依据，不计入用量）。跨日区间按时长分摊，分摊结果一律标记"估算"，不与整点实测混淆。
+</footer>
+
+<script type="module" src="/app.js"></script>
+</body>
+</html>
